@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+voice_deck/__init__.py
+voice_deck/build.py
+voice_deck/cli.py
+voice_deck/record.py
+voice_deck/structure.py
+voice_deck.egg-info/PKG-INFO
+voice_deck.egg-info/SOURCES.txt
+voice_deck.egg-info/dependency_links.txt
+voice_deck.egg-info/entry_points.txt
+voice_deck.egg-info/requires.txt
+voice_deck.egg-info/top_level.txt
