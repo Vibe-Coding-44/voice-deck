@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>voice-deck — デモ</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/theme/night.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+  :root {
+    --accent: #a78bfa;
+    --r-heading-font: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --r-main-font: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --r-heading-color: #f5f5f5;
+    --r-main-color: #d4d4d8;
+    --r-link-color: var(--accent);
+  }
+  .reveal h1 { font-size: 2.2em; letter-spacing: -0.02em; }
+  .reveal h2 { font-size: 1.6em; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 0.2em; margin-bottom: 0.6em; }
+  .reveal h3 { font-size: 1.2em; color: #c4b5fd; }
+  .reveal ul { list-style: none; padding: 0; }
+  .reveal ul li { padding: 0.3em 0 0.3em 1.4em; position: relative; }
+  .reveal ul li::before { content: "▸"; color: var(--accent); position: absolute; left: 0; }
+  .reveal pre { border-radius: 8px; border: 1px solid #3f3f46; }
+  .reveal code { background: #27272a; padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.85em; }
+  .reveal pre code { background: transparent; padding: 0; }
+  .reveal section { text-align: left; padding: 0 2em; }
+  .reveal .slides section:first-child { text-align: center; }
+</style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+<section>
+<h1>voice-deck</h1>
+<p>声がスライドの一次ソース</p>
+</section>
+<section>
+<h2>なにができる？</h2>
+<ul>
+<li>マイクで話すだけで Reveal.js スライドが生成される</li>
+<li>音声 → Whisper STT → Claude API → HTML の自動パイプライン</li>
+<li>CLI 完結・ローカルファイル出力</li>
+</ul>
+</section>
+<section>
+<h2>コマンド一覧</h2>
+<pre><code class="language-bash">voice-deck record          # マイクで録音してスライド生成
+voice-deck build slide.md  # 既存 Markdown から HTML 生成
+voice-deck preview out.html  # ローカルプレビュー
+voice-deck from-wav audio.wav   # 保存済み音声から再開
+voice-deck from-transcript stem # 文字起こしから再開
+voice-deck artifacts        # 保存済みファイル一覧</code></pre>
+</section>
+<section>
+<h2>エラー対策</h2>
+<ul>
+<li>録音音声を <code>~/.voice-deck/artifacts/</code> に<strong>自動保存</strong></li>
+<li>Whisper / Claude API 失敗時も<strong>中間成果物で再開可能</strong></li>
+<li>RateLimit は最大 2 回リトライ（5 秒バックオフ）</li>
+<li>クレジット不足時はダッシュボード URL を案内</li>
+</ul>
+</section>
+<section>
+<h2>アーキテクチャ</h2>
+<pre><code class="language-text">🎙 マイク
+  ↓ sounddevice
+🔉 WAV (自動保存)
+  ↓ OpenAI Whisper API
+📝 文字起こし (自動保存)
+  ↓ Claude API (claude-sonnet-4-6)
+📄 Markdown スライド
+  ↓ build.py
+🌐 Reveal.js HTML</code></pre>
+</section>
+<section>
+<h2>インストール</h2>
+<pre><code class="language-bash">git clone https://github.com/Vibe-Coding-44/voice-deck
+cd voice-deck
+python -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -e .
+export OPENAI_API_KEY=sk-...
+export ANTHROPIC_API_KEY=sk-ant-...
+voice-deck record --title &quot;My Talk&quot;</code></pre>
+</section>
+<section>
+<h2>まとめ</h2>
+<ul>
+<li><strong>声 = 一次ソース</strong> — Markdown を書く手間をゼロに</li>
+<li>Git 管理できる <code>.md</code> ファイルとして出力</li>
+<li>API 障害時も音声・テキストが残るフェイルセーフ設計</li>
+</ul>
+</section>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    controls: true,
+    progress: true,
+    center: false,
+    plugins: [],
+  });
+  document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+</script>
+</body>
+</html>
