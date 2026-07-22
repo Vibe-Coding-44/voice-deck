@@ -19,6 +19,9 @@ dependencies = [
 [project.scripts]
 voice-deck = "voice_deck.cli:cli"
 
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["voice_deck*"]
